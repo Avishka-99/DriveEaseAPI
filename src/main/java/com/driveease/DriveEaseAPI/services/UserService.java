@@ -1,8 +1,10 @@
 package com.driveease.DriveEaseAPI.services;
-
-import com.driveease.DriveEaseAPI.api.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.driveease.DriveEaseAPI.dto.UserDTO;
+import com.driveease.DriveEaseAPI.dto.UserDTO.UserDTOBuilder;
+import com.driveease.DriveEaseAPI.entity.User;
+import com.driveease.DriveEaseAPI.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,24 +12,19 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    private List<User> userList;
-
-    public UserService() {
-        userList = new ArrayList<>();
-        User user = new User("avishka@gmail.com","Avishka","Avi");
-        User user_2 = new User("capi@gmail.com","Casun","DASF");
-        userList.addAll(Arrays.asList(user,user_2));
+    private UserRepository userRepository;
+    
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public Optional<User> getUser(String email) {
-        Optional optional = Optional.empty();
-        for (User user:userList){
-            if(email.equals(user.getEmail())){
-                optional = Optional.of(user);
-                return optional;
-            }
-        }
-        return optional;
+    public UserDTO getUserById(Integer userId){
+        User userEntity = userRepository.findUserById(userId);
+        return UserDTO.builder()
+        .name(userEntity.getName())
+        .email(userEntity.getEmail())
+        .build();
+                
     }
-    //public
 }
